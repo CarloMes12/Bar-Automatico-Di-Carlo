@@ -1,236 +1,443 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Bar Automatico di Carlo</title>
+
 <style>
-:root{--blu:#071a52;--ar:#ff7a00}
+:root{
+  --blu:#071a52;
+  --ar:#ff7a00;
+  --verde:#25d76d;
+}
 *{box-sizing:border-box}
+
 body{
-margin:0;font-family:Arial,sans-serif;color:var(--blu);
-background:
-radial-gradient(circle at 10% 15%,rgba(255,220,100,.65),transparent 20%),
-radial-gradient(circle at 90% 10%,rgba(80,200,255,.35),transparent 20%),
-linear-gradient(145deg,#fff8e8,#ebfbff 50%,#fff);
+  margin:0;
+  font-family:Arial,sans-serif;
+  color:var(--blu);
+  background:
+    radial-gradient(circle at 10% 15%,rgba(255,220,100,.6),transparent 20%),
+    radial-gradient(circle at 90% 10%,rgba(80,200,255,.35),transparent 20%),
+    linear-gradient(145deg,#fff8e8,#ebfbff 50%,#fff);
 }
-.wrap{max-width:760px;margin:auto;padding:12px 12px 120px}
+
 .hero{
-position:fixed;
-top:0;
-left:50%;
-transform:translateX(-50%);
-width:min(760px,100%);
-z-index:60;
-background:rgba(255,255,255,.88);
-backdrop-filter:blur(14px);
-border-radius:0 0 30px 30px;
-padding:18px 16px 12px;
-text-align:center;
-box-shadow:0 10px 35px rgba(0,0,0,.12);
+  position:fixed;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(760px,100%);
+  z-index:100;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(12px);
+  border-radius:0 0 30px 30px;
+  padding:16px 12px 12px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
 }
-h1{
-margin:0;
-font-size:54px;
-line-height:.9;
-font-style:italic;
-font-family:Georgia,serif;
+
+.hero h1{
+  margin:0;
+  font-size:56px;
+  line-height:.9;
+  font-style:italic;
+  font-family:Georgia,serif;
 }
-h1 span{display:block;color:var(--ar);font-size:.72em}
-.sub{font-weight:800;margin-top:14px}
-.list{display:grid;gap:14px;margin-top:150px}
+
+.hero span{
+  display:block;
+  color:var(--ar);
+  font-size:.7em;
+}
+
+.sub{
+  margin-top:10px;
+  font-weight:800;
+}
+
+.wrap{
+  max-width:760px;
+  margin:auto;
+  padding:155px 12px 120px;
+}
+
+.page{display:none}
+.page.active{display:block}
+
+.list{display:grid;gap:14px}
+
 .card{
-background:rgba(255,255,255,.9);
-border-radius:24px;
-padding:14px;
-display:grid;
-grid-template-columns:64px 1fr auto;
-gap:12px;
-align-items:center;
-box-shadow:0 8px 25px rgba(0,0,0,.08);
+  background:rgba(255,255,255,.9);
+  border-radius:24px;
+  padding:14px;
+  display:grid;
+  grid-template-columns:64px 1fr auto;
+  gap:12px;
+  align-items:center;
+  box-shadow:0 8px 25px rgba(0,0,0,.08);
 }
+
 .icon{
-width:58px;height:58px;border-radius:18px;
-display:grid;place-items:center;
-font-size:30px;
-background:linear-gradient(145deg,#fff3c6,#edfaff);
+  width:58px;height:58px;border-radius:18px;
+  display:grid;place-items:center;
+  font-size:30px;
+  background:linear-gradient(145deg,#fff3c6,#edfaff);
 }
+
 .name{font-weight:900;font-size:18px}
 .ing{font-size:12px;color:#5a6880;margin-top:4px}
 .price{font-size:22px;font-weight:900;color:var(--ar);text-align:right}
-.ctrl{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-top:6px}
+
+.ctrl{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  justify-content:flex-end;
+  margin-top:6px;
+}
+
 .round{
-width:42px;height:42px;border-radius:14px;border:0;
-font-size:22px;font-weight:900;cursor:pointer;
-background:#eef5ff;color:var(--blu);
+  width:42px;height:42px;border-radius:14px;border:0;
+  font-size:22px;font-weight:900;cursor:pointer;
+  background:#eef5ff;color:var(--blu);
 }
-.plus{
-background:linear-gradient(180deg,#ffb12a,#ff7300);
-color:#fff;
-}
+
+.plus{background:linear-gradient(180deg,#ffb12a,#ff7300);color:#fff}
 .qty{font-weight:900;min-width:18px;text-align:center}
+
 .bottom{
-position:fixed;
-left:50%;
-transform:translateX(-50%);
-bottom:12px;
-width:min(720px,calc(100% - 20px));
-background:linear-gradient(135deg,#071a52,#0b57ad);
-border-radius:24px;
-padding:14px;
-display:grid;
-grid-template-columns:1fr 1.5fr;
-gap:10px;
-align-items:center;
-box-shadow:0 15px 35px rgba(0,0,0,.25);
-color:#fff;
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:12px;
+  width:min(720px,calc(100% - 20px));
+  background:linear-gradient(135deg,#071a52,#0a4ba5);
+  border-radius:24px;
+  padding:14px;
+  display:grid;
+  grid-template-columns:1fr 1.5fr;
+  gap:10px;
+  align-items:center;
+  box-shadow:0 14px 35px rgba(0,0,0,.24);
+  color:#fff;
+  z-index:50;
 }
-.total strong{font-size:28px}
+
+.total strong{font-size:30px}
+
 .go{
-height:58px;border-radius:18px;border:0;
-font-size:18px;font-weight:900;cursor:pointer;
-background:linear-gradient(135deg,#ff9f1a,#ff6200);
-color:#fff;
+  height:60px;
+  width:100%;
+  border-radius:20px;
+  border:0;
+  font-size:22px;
+  font-weight:900;
+  cursor:pointer;
+  color:#fff;
+  margin-top:14px;
+  background:linear-gradient(135deg,#ff9f1a,#ff6200);
 }
-.go:disabled{opacity:.4}
-.page{display:none}
-.page.active{display:block}
+.go:disabled{opacity:.4;cursor:not-allowed}
+.green{background:linear-gradient(135deg,#3ce381,#0eaa59)!important}
+.blue{background:linear-gradient(135deg,#2da8ff,#0047b3)!important}
+
+.soft{
+  margin-top:12px;
+  height:52px;
+  width:100%;
+  border-radius:18px;
+  border:0;
+  font-weight:900;
+  font-size:18px;
+  background:#eef6ff;
+  color:var(--blu);
+  cursor:pointer;
+}
+
 .panel{
-margin-top:150px;
-background:rgba(255,255,255,.9);
-padding:20px;
-border-radius:28px;
-box-shadow:0 10px 30px rgba(0,0,0,.1);
+  background:rgba(255,255,255,.92);
+  border-radius:28px;
+  padding:22px;
+  box-shadow:0 10px 28px rgba(0,0,0,.08);
 }
+
+.panel h2{
+  text-align:center;
+  font-size:34px;
+  margin:8px 0 16px;
+}
+
 .cartRow{
-display:grid;
-grid-template-columns:52px 1fr auto;
-gap:10px;
-padding:12px 0;
-border-bottom:1px solid rgba(0,0,0,.08);
-align-items:center;
+  display:grid;
+  grid-template-columns:52px 1fr auto;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid rgba(0,0,0,.08);
+  align-items:center;
 }
+
 .bigTotal{
-display:flex;
-justify-content:space-between;
-font-size:28px;
-font-weight:900;
-margin-top:16px;
-background:#fff;
-padding:16px;
-border-radius:22px;
+  display:flex;
+  justify-content:space-between;
+  font-size:28px;
+  font-weight:900;
+  margin-top:16px;
+  background:#fff;
+  padding:16px;
+  border-radius:22px;
 }
-.pay{
-text-align:center;
+
+.center{text-align:center}
+
+.bigIcon{
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  margin:0 auto 16px;
+  display:grid;
+  place-items:center;
+  font-size:62px;
+  background:linear-gradient(145deg,#e7fbff,#fff2c7);
 }
-.payIcon{
-width:160px;height:160px;border-radius:50%;
-margin:10px auto 18px;
-display:grid;place-items:center;
-font-size:75px;
-background:linear-gradient(145deg,#e8fbff,#fff3bf);
-}
+
 .payTotal{
-font-size:48px;
-font-weight:900;
-color:var(--ar);
-margin:12px 0;
+  text-align:center;
+  font-size:52px;
+  font-weight:900;
+  color:var(--ar);
+  margin:18px 0;
 }
-.hint{
-background:#e8f5ff;
-padding:14px;
-border-radius:18px;
-font-weight:700;
-color:#084fb4;
-margin-top:14px;
+
+.optionWrap{
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  margin-top:24px;
+  flex-wrap:wrap;
 }
-.green{
-background:linear-gradient(135deg,#3ae07e,#0ca953)!important;
+
+.optionCircle{
+  width:170px;
+  height:170px;
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:900;
+  font-size:26px;
+  cursor:pointer;
+  box-shadow:0 12px 28px rgba(0,0,0,.16);
+  transition:.2s;
+  text-align:center;
+  border:0;
 }
+
+.optionCircle:hover{transform:scale(1.04)}
+.cashCircle{background:linear-gradient(145deg,#32df7d,#11994d)}
+.cardCircle{background:linear-gradient(145deg,#34b7ff,#004db8)}
+.optionEmoji{font-size:54px;margin-bottom:10px}
+
 .finish{
-min-height:70vh;
-padding-top:150px;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-text-align:center;
+  min-height:60vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
 }
+
 .finishCircle{
-width:170px;height:170px;border-radius:50%;
-background:linear-gradient(135deg,#4ae786,#11ab58);
-display:grid;place-items:center;
-font-size:80px;color:#fff;
+  width:170px;
+  height:170px;
+  border-radius:50%;
+  background:linear-gradient(145deg,#47e786,#11a858);
+  display:grid;
+  place-items:center;
+  font-size:76px;
+  color:#fff;
+  margin-bottom:18px;
 }
+
+/* Popup bello */
+#customPopup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  padding:20px;
+}
+
+.popupBox{
+  width:min(430px,100%);
+  background:white;
+  border-radius:30px;
+  padding:28px 24px;
+  text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,.25);
+  animation:pop .25s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(.85);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+.popupIcon{font-size:58px;margin-bottom:10px}
+.popupTitle{font-size:30px;font-weight:900;margin-bottom:12px}
+.popupText{font-size:18px;line-height:1.4;margin-bottom:22px}
+
+.popupBtn{
+  height:54px;
+  padding:0 28px;
+  border:0;
+  border-radius:18px;
+  background:linear-gradient(135deg,#ff9f1a,#ff6a00);
+  color:#fff;
+  font-size:20px;
+  font-weight:900;
+  cursor:pointer;
+}
+
 @media(max-width:520px){
-h1{font-size:42px}
-.card{grid-template-columns:58px 1fr auto}
+  .hero h1{font-size:40px}
+  .wrap{padding:138px 10px 120px}
+  .panel{padding:18px}
+  .panel h2{font-size:28px}
+  .card{grid-template-columns:58px 1fr auto;padding:12px}
+  .icon{width:52px;height:52px}
+  .name{font-size:16px}
+  .bigIcon{width:105px;height:105px;font-size:52px}
+  .payTotal{font-size:40px}
+  .optionCircle{width:140px;height:140px;font-size:22px}
+  .optionEmoji{font-size:46px}
+  .go{height:54px;font-size:18px}
 }
 </style>
 </head>
+
 <body>
+
+<div class="hero">
+  <h1>Bar Automatico <span>di Carlo</span></h1>
+  <div class="sub">Scegli le tue bevande preferite 🍸</div>
+</div>
 
 <div class="wrap">
 
-<div class="hero">
-<h1>Bar Automatico <span>di Carlo</span></h1>
-<div class="sub">Scegli le tue bevande preferite 🍸</div>
-</div>
+  <div id="menu" class="page active">
+    <div id="drinkList" class="list"></div>
+  </div>
 
-<div id="menu" class="page active">
-<div id="drinkList" class="list"></div>
-</div>
+  <div id="cartPage" class="page">
+    <div class="panel">
+      <h2>Il tuo carrello 🛒</h2>
+      <div id="cartRows"></div>
+      <div class="bigTotal">
+        <span>Totale</span>
+        <span id="cartTotal">0,00 €</span>
+      </div>
+      <button class="go" onclick="goPayment()">CONTINUA</button>
+      <button class="soft" onclick="show('menu')">↩ Torna al menu</button>
+    </div>
+  </div>
 
-<div id="cartPage" class="page">
-<div class="panel">
-<h2>Il tuo carrello 🛒</h2>
-<div id="cartRows"></div>
-<div class="bigTotal">
-<span>Totale</span>
-<span id="cartTotal">0,00 €</span>
-</div>
-<button class="go" style="width:100%;margin-top:16px" onclick="goPayment()">CONTINUA</button>
-</div>
-</div>
+  <div id="paymentPage" class="page">
+    <div class="panel center">
+      <div class="bigIcon">💳</div>
+      <h2>Conferma e paga</h2>
+      <p style="font-size:20px;font-weight:700">
+        L’ordine verrà prima inviato alla macchina via Bluetooth.
+      </p>
+      <p>Subito dopo potrai scegliere se pagare in contanti o con carta.</p>
+      <div class="payTotal" id="payAmount">0,00 €</div>
+      <button class="go green" onclick="connectSendThenChoosePayment()">✓ CONFERMA ORDINE</button>
+    </div>
+  </div>
 
-<div id="paymentPage" class="page">
-<div class="panel pay">
-<div class="payIcon">💳</div>
-<h2>Conferma e paga</h2>
-<p><b>L’ordine verrà inviato via Bluetooth.</b></p>
-<div class="payTotal" id="payAmount">0,00 €</div>
-<div class="hint">
-LED macchina:<br>
-🟢 pronta<br>
-🔵 posiziona bicchiere<br>
-🟠 erogazione<br>
-🟣 rimuovi bicchiere
-</div>
-<button class="go green" style="width:100%;margin-top:18px" onclick="confirmAndPay()">✓ CONFERMA ORDINE E PAGA</button>
-</div>
-</div>
+  <div id="methodPage" class="page">
+    <div class="panel center">
+      <div class="bigIcon">💰</div>
+      <h2>Metodo di pagamento</h2>
+      <p style="font-size:20px;font-weight:700">Come preferisci pagare?</p>
+      <div class="payTotal" id="methodAmount">0,00 €</div>
 
-<div id="finishPage" class="page">
-<div class="finish">
-<div class="finishCircle">✅</div>
-<h2>Ordine inviato</h2>
-<p>Completa il pagamento su SumUp.<br>Poi segui i LED della macchina.</p>
-</div>
-</div>
+      <div class="optionWrap">
+        <button class="optionCircle cashCircle" onclick="showCashPage()">
+          <div class="optionEmoji">💵</div>
+          <div>Contanti</div>
+        </button>
+
+        <button class="optionCircle cardCircle" onclick="showCardPage()">
+          <div class="optionEmoji">💳</div>
+          <div>Carta</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cashPage" class="page">
+    <div class="panel center">
+      <div class="bigIcon">💵</div>
+      <h2>Pagamento in contanti</h2>
+      <p style="font-size:20px;font-weight:700">
+        Paga direttamente in contanti a Carlo.
+      </p>
+      <div class="payTotal" id="cashAmount">0,00 €</div>
+      <button class="go green" onclick="showFinish()">✓ HO PAGATO</button>
+      <button class="soft" onclick="show('methodPage')">↩ Cambia metodo</button>
+    </div>
+  </div>
+
+  <div id="cardPage" class="page">
+    <div class="panel center">
+      <div class="bigIcon">💳</div>
+      <h2>Pagamento con carta</h2>
+      <p style="font-size:20px;font-weight:700">Ordine inviato correttamente.</p>
+      <p>Premi “Paga ora” per aprire SumUp.</p>
+      <div class="payTotal" id="cardAmount">0,00 €</div>
+      <button class="go blue" onclick="openSumUpAndFinish()">💳 PAGA ORA</button>
+      <button class="soft" onclick="show('methodPage')">↩ Cambia metodo</button>
+    </div>
+  </div>
+
+  <div id="finishPage" class="page">
+    <div class="finish">
+      <div class="finishCircle">✅</div>
+      <h2>Ordine inviato</h2>
+      <p style="font-size:22px">
+        Segui i LED della macchina.<br>
+        Grazie dal Bar Automatico di Carlo.
+      </p>
+    </div>
+  </div>
 
 </div>
 
 <div class="bottom" id="bottomBar">
-<div class="total">
-<div>Carrello</div>
-<strong id="bottomTotal">0,00 €</strong>
+  <div class="total">
+    <div>Carrello</div>
+    <strong id="bottomTotal">0,00 €</strong>
+  </div>
+  <button id="goCart" class="go" onclick="openCart()" disabled>Vai al carrello →</button>
 </div>
-<button id="goCart" class="go" onclick="openCart()" disabled>Vai al carrello →</button>
+
+<div id="customPopup">
+  <div class="popupBox">
+    <div class="popupIcon" id="popIcon">⚠️</div>
+    <div class="popupTitle" id="popTitle">Attenzione</div>
+    <div class="popupText" id="popText">Messaggio</div>
+    <button class="popupBtn" onclick="closePopup()">OK</button>
+  </div>
 </div>
 
 <script>
-
 const sumupLinks = {
 1:"https://pay.sumup.com/b2c/QRL1CFNW",
 2:"https://pay.sumup.com/b2c/QG3HG5ED",
@@ -302,175 +509,169 @@ const drinks=[
 
 let qty=Array(drinks.length).fill(0);
 
-function euro(v){
-return v.toFixed(2).replace('.',',')+' €';
+function euro(v){return v.toFixed(2).replace('.',',')+' €';}
+function total(){return qty.reduce((s,q,i)=>s+q*drinks[i].price,0);}
+function count(){return qty.reduce((s,q)=>s+q,0);}
+
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('bottomBar').style.display=id==='menu'?'grid':'none';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function total(){
-return qty.reduce((s,q,i)=>s+q*drinks[i].price,0);
+function showPopup(icon,title,text){
+  document.getElementById('popIcon').textContent=icon;
+  document.getElementById('popTitle').textContent=title;
+  document.getElementById('popText').textContent=text;
+  document.getElementById('customPopup').style.display='flex';
+}
+
+function closePopup(){
+  document.getElementById('customPopup').style.display='none';
 }
 
 function renderMenu(){
-const list=document.getElementById('drinkList');
-list.innerHTML='';
-
-drinks.forEach((d,i)=>{
-const card=document.createElement('div');
-card.className='card';
-
-card.innerHTML=`
-<div class="icon">${d.icon}</div>
-
-<div>
-<div class="name">${d.name}</div>
-${d.ingredients?`<div class="ing">${d.ingredients}</div>`:''}
-</div>
-
-<div>
-<div class="price">${euro(d.price)}</div>
-
-<div class="ctrl">
-<button class="round" onclick="changeQty(${i},-1)">−</button>
-<div class="qty">${qty[i]}</div>
-<button class="round plus" onclick="changeQty(${i},1)">+</button>
-</div>
-</div>
-`;
-
-list.appendChild(card);
-});
+  const list=document.getElementById('drinkList');
+  list.innerHTML='';
+  drinks.forEach((d,i)=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`
+      <div class="icon">${d.icon}</div>
+      <div>
+        <div class="name">${d.name}</div>
+        ${d.ingredients?`<div class="ing">${d.ingredients}</div>`:''}
+      </div>
+      <div>
+        <div class="price">${euro(d.price)}</div>
+        <div class="ctrl">
+          <button class="round" onclick="changeQty(${i},-1)">−</button>
+          <div class="qty">${qty[i]}</div>
+          <button class="round plus" onclick="changeQty(${i},1)">+</button>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
 }
 
 function changeQty(i,d){
-if(d>0 && total()+drinks[i].price>50){
-alert('Massimo importo raggiunto: 50,00 €');
-return;
-}
-
-qty[i]=Math.max(0,qty[i]+d);
-
-renderMenu();
-updateBottom();
+  if(d>0 && total()+drinks[i].price>50){
+    showPopup('💳','Limite raggiunto','Importo massimo raggiunto: 50,00 €.');
+    return;
+  }
+  qty[i]=Math.max(0,qty[i]+d);
+  renderMenu();
+  updateBottom();
 }
 
 function updateBottom(){
-document.getElementById('bottomTotal').textContent=euro(total());
-document.getElementById('goCart').disabled=total()<=0;
-}
-
-function show(id){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-
-document.getElementById('bottomBar').style.display=id==='menu'?'grid':'none';
+  document.getElementById('bottomTotal').textContent=euro(total());
+  document.getElementById('goCart').disabled=total()<=0;
 }
 
 function openCart(){
-const rows=document.getElementById('cartRows');
-rows.innerHTML='';
+  if(total()<=0){
+    showPopup('🛒','Carrello vuoto','Seleziona almeno una bevanda.');
+    return;
+  }
 
-drinks.forEach((d,i)=>{
-if(qty[i]>0){
-const row=document.createElement('div');
-row.className='cartRow';
-
-row.innerHTML=`
-<div class="icon">${d.icon}</div>
-<div>
-<b>${d.name}</b><br>
-${qty[i]} x ${euro(d.price)}
-</div>
-<div><b>${euro(qty[i]*d.price)}</b></div>
-`;
-
-rows.appendChild(row);
-}
-});
-
-document.getElementById('cartTotal').textContent=euro(total());
-
-show('cartPage');
+  const rows=document.getElementById('cartRows');
+  rows.innerHTML='';
+  drinks.forEach((d,i)=>{
+    if(qty[i]>0){
+      const row=document.createElement('div');
+      row.className='cartRow';
+      row.innerHTML=`
+        <div class="icon">${d.icon}</div>
+        <div><b>${d.name}</b><br>${qty[i]} x ${euro(d.price)}</div>
+        <div><b>${euro(qty[i]*d.price)}</b></div>`;
+      rows.appendChild(row);
+    }
+  });
+  document.getElementById('cartTotal').textContent=euro(total());
+  show('cartPage');
 }
 
 function goPayment(){
-document.getElementById('payAmount').textContent=euro(total());
-show('paymentPage');
+  document.getElementById('payAmount').textContent=euro(total());
+  show('paymentPage');
 }
 
 function buildOrder(){
-let order=[];
-
-qty.forEach((q,i)=>{
-for(let n=0;n<q;n++){
-order.push(i);
-}
-});
-
-return order;
+  let order=[];
+  qty.forEach((q,i)=>{
+    for(let n=0;n<q;n++) order.push(i);
+  });
+  return order;
 }
 
-async function confirmAndPay(){
+async function connectSendThenChoosePayment(){
+  const ok=await sendBluetooth();
+  if(!ok)return;
 
-const t=total();
+  document.getElementById('methodAmount').textContent=euro(total());
+  document.getElementById('cashAmount').textContent=euro(total());
+  document.getElementById('cardAmount').textContent=euro(total());
 
-const link=sumupLinks[t];
-
-if(!link){
-alert('Link SumUp non trovato.');
-return;
-}
-
-const ok=await sendBluetooth();
-
-if(!ok)return;
-
-show('finishPage');
-
-// Aspetta un attimo prima di aprire SumUp,
-// così il cliente riesce a leggere "Ordine inviato".
-setTimeout(() => {
-  window.open(link, '_blank');
-}, 2500);
+  show('methodPage');
 }
 
 async function sendBluetooth(){
+  try{
+    if(!navigator.bluetooth){
+      showPopup('📶','Bluetooth non supportato','Usa Chrome o Edge su Android o PC.');
+      return false;
+    }
 
-try{
+    const device=await navigator.bluetooth.requestDevice({
+      filters:[{namePrefix:'Bar Automatico'}],
+      optionalServices:[SERVICE_UUID]
+    });
 
-if(!navigator.bluetooth){
-alert('Bluetooth non supportato. Usa Chrome o Edge.');
-return false;
+    const server=await device.gatt.connect();
+    const service=await server.getPrimaryService(SERVICE_UUID);
+    const rx=await service.getCharacteristic(RX_UUID);
+
+    const command='O:'+buildOrder().join(',');
+    await rx.writeValue(new TextEncoder().encode(command));
+
+    return true;
+
+  }catch(err){
+    showPopup('📶','Bluetooth annullato','La connessione Bluetooth è stata annullata o non è riuscita.');
+    console.error(err);
+    return false;
+  }
 }
 
-const device=await navigator.bluetooth.requestDevice({
-filters:[{namePrefix:'Bar Automatico'}],
-optionalServices:[SERVICE_UUID]
-});
+function showCashPage(){show('cashPage');}
+function showCardPage(){show('cardPage');}
 
-const server=await device.gatt.connect();
+function openSumUpAndFinish(){
+  const t=total();
+  const link=sumupLinks[t];
 
-const service=await server.getPrimaryService(SERVICE_UUID);
+  if(!link){
+    showPopup('💳','Link mancante','Link SumUp non trovato per questo importo.');
+    return;
+  }
 
-const rx=await service.getCharacteristic(RX_UUID);
+  showPopup('💳','Pagamento','Ordine inviato correttamente. Tra pochi secondi si aprirà SumUp.');
 
-const command='O:'+buildOrder().join(',');
-
-await rx.writeValue(new TextEncoder().encode(command));
-
-return true;
-
-}catch(err){
-
-alert('Connessione Bluetooth annullata.');
-console.error(err);
-
-return false;
+  setTimeout(()=>{
+    closePopup();
+    window.open(link,'_blank');
+    show('finishPage');
+  },2500);
 }
+
+function showFinish(){
+  show('finishPage');
 }
 
 renderMenu();
 updateBottom();
-
 </script>
 
 </body>
