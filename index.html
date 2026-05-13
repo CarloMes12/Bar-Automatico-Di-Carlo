@@ -1,438 +1,465 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Bar Automatico di Carlo</title>
-  <style>
-    :root{
-      --blu:#071a52;
-      --azz:#35b7ff;
-      --arancio:#ff7a00;
-      --verde:#24c96b;
-      --rosso:#ff3f5f;
-      --giallo:#ffd84d;
-      --card:rgba(255,255,255,.88);
-      --ombra:0 18px 45px rgba(7,26,82,.18);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      min-height:100vh;
-      color:var(--blu);
-      background:
-        radial-gradient(circle at 12% 12%, rgba(255,216,77,.65), transparent 22%),
-        radial-gradient(circle at 88% 12%, rgba(53,183,255,.45), transparent 24%),
-        radial-gradient(circle at 10% 90%, rgba(53,183,255,.32), transparent 22%),
-        linear-gradient(145deg,#fff8e8 0%,#e9fbff 45%,#ffffff 100%);
-      overflow-x:hidden;
-    }
-    body::before,body::after{
-      content:"";
-      position:fixed;
-      width:220px;height:220px;border-radius:50%;
-      filter:blur(1px);
-      opacity:.42;
-      z-index:-1;
-    }
-    body::before{right:-50px;top:40px;background:linear-gradient(135deg,#c5e9ff,#fff0b8)}
-    body::after{left:-70px;bottom:60px;background:linear-gradient(135deg,#a9edff,#ffffff)}
-    .wrap{width:min(760px,100%);margin:0 auto;padding:18px 14px 110px}
-    .hero{
-      position:relative;
-      background:rgba(255,255,255,.72);
-      backdrop-filter: blur(12px);
-      border:1px solid rgba(255,255,255,.75);
-      border-radius:0 0 32px 32px;
-      box-shadow:var(--ombra);
-      padding:18px 16px 14px;
-      text-align:center;
-      overflow:hidden;
-    }
-    .hero .fruit{position:absolute;font-size:35px;filter:drop-shadow(0 8px 10px rgba(255,122,0,.18))}
-    .f1{left:16px;top:10px}.f2{right:18px;top:10px}.f3{right:62px;top:42px;font-size:25px!important}.f4{left:74px;bottom:8px;font-size:22px!important}
-    h1{
-      margin:0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-style:italic;
-      font-size:clamp(36px,8vw,58px);
-      line-height:.9;
-      letter-spacing:-1.5px;
-      text-shadow:0 5px 18px rgba(7,26,82,.12);
-    }
-    h1 span{display:block;color:var(--arancio);font-size:.74em;margin-top:4px}
-    .subtitle{font-weight:800;margin-top:12px;font-size:16px}
-    .status-pill{
-      margin:12px auto 0;
-      display:none;
-      gap:8px;align-items:center;
-      padding:9px 15px;border-radius:999px;
-      background:rgba(255,255,255,.8);
-      box-shadow:0 8px 20px rgba(7,26,82,.09);
-      font-weight:800;font-size:14px;
-    }
-    .status-pill.show{display:inline-flex}
-    .dot{width:10px;height:10px;border-radius:50%;background:#aaa;box-shadow:0 0 0 5px rgba(0,0,0,.05)}
-    .dot.ok{background:var(--verde)} .dot.no{background:var(--rosso)} .dot.work{background:var(--arancio)}
-    .section{display:none;animation:fade .25s ease}
-    .section.active{display:block}
-    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-    .drink-list{margin-top:18px;display:grid;gap:12px}
-    .drink{
-      display:grid;grid-template-columns:68px 1fr auto;gap:12px;align-items:center;
-      background:var(--card);
-      border:1px solid rgba(255,255,255,.9);
-      border-radius:22px;
-      padding:12px;
-      box-shadow:0 10px 26px rgba(7,26,82,.10);
-    }
-    .icon{
-      width:58px;height:58px;border-radius:18px;
-      display:grid;place-items:center;font-size:32px;
-      background:linear-gradient(145deg,#fff7ce,#e9fbff);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.55),0 8px 16px rgba(255,122,0,.12);
-    }
-    .name{font-weight:900;font-size:17px}
-    .ingredients{font-size:12px;margin-top:4px;color:#405078;font-weight:700}
-    .price{font-weight:950;color:var(--arancio);font-size:18px;margin-bottom:7px;text-align:right}
-    .qty{display:flex;align-items:center;gap:10px;justify-content:flex-end}
-    button{
-      border:0;
-      cursor:pointer;
-      font:inherit;
-      font-weight:900;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .small{
-      width:42px;height:42px;border-radius:14px;
-      background:#eef5ff;color:var(--blu);
-      box-shadow:0 8px 18px rgba(7,26,82,.10);
-      font-size:21px;
-    }
-    .plus{
-      background:linear-gradient(180deg,#ffb12a,#ff7300);
-      color:white;
-      box-shadow:0 12px 24px rgba(255,122,0,.28);
-    }
-    .num{min-width:18px;text-align:center;font-weight:950}
-    .bar{
-      position:fixed;left:50%;bottom:14px;transform:translateX(-50%);
-      width:min(730px,calc(100% - 24px));
-      background:linear-gradient(135deg,#071a52,#0b57ad);
-      border-radius:24px;
-      padding:14px;
-      display:grid;grid-template-columns:1fr 1.6fr;gap:10px;align-items:center;
-      box-shadow:0 18px 45px rgba(7,26,82,.35);
-      z-index:20;
-    }
-    .bar small{display:block;color:#c7d9ff;font-weight:800}
-    .bar strong{color:white;font-size:25px}
-    .cta{
-      height:58px;border-radius:18px;color:white;
-      background:linear-gradient(135deg,#ff9f1a,#ff6200);
-      box-shadow:0 10px 24px rgba(255,122,0,.38);
-      font-size:17px;
-    }
-    .cta:disabled{opacity:.45;filter:saturate(.3);cursor:not-allowed}
-    .green{background:linear-gradient(135deg,#38de7a,#0daf55)!important;box-shadow:0 12px 28px rgba(36,201,107,.32)!important}
-    .blue{background:linear-gradient(135deg,#2fb8ff,#075bc2)!important}
-    .soft{background:#eef7ff;color:var(--blu);box-shadow:none}
-    .panel{
-      margin-top:18px;background:var(--card);border-radius:28px;padding:18px;
-      box-shadow:var(--ombra);border:1px solid rgba(255,255,255,.9);
-    }
-    .panel h2{font-size:30px;text-align:center;margin:6px 0 18px;font-weight:950}
-    .cart-row{display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(7,26,82,.08)}
-    .cart-row:last-child{border-bottom:0}
-    .total-card{margin-top:16px;border-radius:24px;background:white;padding:18px;display:flex;justify-content:space-between;align-items:center;font-size:24px;font-weight:950;box-shadow:0 10px 25px rgba(7,26,82,.08)}
-    .pay-hero{text-align:center}
-    .big-emoji{
-      width:155px;height:155px;border-radius:50%;margin:12px auto 20px;display:grid;place-items:center;font-size:78px;
-      background:linear-gradient(135deg,#e9fbff,#fff2b8);box-shadow:0 20px 40px rgba(53,183,255,.22)
-    }
-    .pay-total{font-size:44px;color:var(--arancio);font-weight:950;margin:6px 0}
-    .hint{background:#e9f5ff;border-radius:18px;padding:14px;margin:14px 0;font-weight:750;color:#0c4cb4}
-    .machine{
-      min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-    }
-    .machine h2{font-family:Georgia,serif;font-style:italic;font-size:42px;margin:8px 0;color:var(--blu)}
-    .machine p{font-size:18px;font-weight:750;line-height:1.45}
-    .circle{
-      width:170px;height:170px;border-radius:50%;display:grid;place-items:center;font-size:78px;margin:10px auto 18px;
-      color:white;background:linear-gradient(135deg,#40c5ff,#0567d9);box-shadow:0 20px 45px rgba(5,103,217,.28);
-    }
-    .circle.orange{background:linear-gradient(135deg,#ffb12a,#ff6200)}
-    .circle.green{background:linear-gradient(135deg,#51e986,#12a958)}
-    .circle.yellow{background:linear-gradient(135deg,#ffe56a,#ffae00)}
-    .progress{display:flex;gap:8px;justify-content:center;margin:18px 0}
-    .step-dot{width:12px;height:12px;border-radius:50%;background:#c5d1e6}
-    .step-dot.on{background:var(--verde);box-shadow:0 0 0 5px rgba(36,201,107,.15)}
-    .order-mini{margin-top:16px;background:rgba(255,255,255,.7);border-radius:20px;padding:14px;text-align:left}
-    .brand{
-      position:fixed;
-      right:10px;
-      bottom:4px;
-      z-index:50;
-      font-size:11px;
-      color:rgba(7,26,82,.55);
-      font-weight:900;
-      letter-spacing:.2px;
-      pointer-events:none;
-    }
-    @media(max-width:520px){
-      .wrap{padding:10px 10px 110px}
-      .drink{grid-template-columns:60px 1fr auto;padding:10px;border-radius:20px}
-      .icon{width:52px;height:52px}
-      .name{font-size:16px}
-      .bar{grid-template-columns:1fr 1.25fr}
-      h1{font-size:43px}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bar Automatico di Carlo</title>
+<style>
+:root{--blu:#071a52;--ar:#ff7a00}
+*{box-sizing:border-box}
+body{
+margin:0;font-family:Arial,sans-serif;color:var(--blu);
+background:
+radial-gradient(circle at 10% 15%,rgba(255,220,100,.65),transparent 20%),
+radial-gradient(circle at 90% 10%,rgba(80,200,255,.35),transparent 20%),
+linear-gradient(145deg,#fff8e8,#ebfbff 50%,#fff);
+}
+.wrap{max-width:760px;margin:auto;padding:12px 12px 120px}
+.hero{
+background:rgba(255,255,255,.82);
+border-radius:0 0 30px 30px;
+padding:24px 16px 16px;
+text-align:center;
+box-shadow:0 10px 35px rgba(0,0,0,.12);
+}
+h1{
+margin:0;
+font-size:54px;
+line-height:.9;
+font-style:italic;
+font-family:Georgia,serif;
+}
+h1 span{display:block;color:var(--ar);font-size:.72em}
+.sub{font-weight:800;margin-top:14px}
+.list{display:grid;gap:14px;margin-top:18px}
+.card{
+background:rgba(255,255,255,.9);
+border-radius:24px;
+padding:14px;
+display:grid;
+grid-template-columns:64px 1fr auto;
+gap:12px;
+align-items:center;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+.icon{
+width:58px;height:58px;border-radius:18px;
+display:grid;place-items:center;
+font-size:30px;
+background:linear-gradient(145deg,#fff3c6,#edfaff);
+}
+.name{font-weight:900;font-size:18px}
+.ing{font-size:12px;color:#5a6880;margin-top:4px}
+.price{font-size:22px;font-weight:900;color:var(--ar);text-align:right}
+.ctrl{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-top:6px}
+.round{
+width:42px;height:42px;border-radius:14px;border:0;
+font-size:22px;font-weight:900;cursor:pointer;
+background:#eef5ff;color:var(--blu);
+}
+.plus{
+background:linear-gradient(180deg,#ffb12a,#ff7300);
+color:#fff;
+}
+.qty{font-weight:900;min-width:18px;text-align:center}
+.bottom{
+position:fixed;
+left:50%;
+transform:translateX(-50%);
+bottom:12px;
+width:min(720px,calc(100% - 20px));
+background:linear-gradient(135deg,#071a52,#0b57ad);
+border-radius:24px;
+padding:14px;
+display:grid;
+grid-template-columns:1fr 1.5fr;
+gap:10px;
+align-items:center;
+box-shadow:0 15px 35px rgba(0,0,0,.25);
+color:#fff;
+}
+.total strong{font-size:28px}
+.go{
+height:58px;border-radius:18px;border:0;
+font-size:18px;font-weight:900;cursor:pointer;
+background:linear-gradient(135deg,#ff9f1a,#ff6200);
+color:#fff;
+}
+.go:disabled{opacity:.4}
+.page{display:none}
+.page.active{display:block}
+.panel{
+margin-top:20px;
+background:rgba(255,255,255,.9);
+padding:20px;
+border-radius:28px;
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+.cartRow{
+display:grid;
+grid-template-columns:52px 1fr auto;
+gap:10px;
+padding:12px 0;
+border-bottom:1px solid rgba(0,0,0,.08);
+align-items:center;
+}
+.bigTotal{
+display:flex;
+justify-content:space-between;
+font-size:28px;
+font-weight:900;
+margin-top:16px;
+background:#fff;
+padding:16px;
+border-radius:22px;
+}
+.pay{
+text-align:center;
+}
+.payIcon{
+width:160px;height:160px;border-radius:50%;
+margin:10px auto 18px;
+display:grid;place-items:center;
+font-size:75px;
+background:linear-gradient(145deg,#e8fbff,#fff3bf);
+}
+.payTotal{
+font-size:48px;
+font-weight:900;
+color:var(--ar);
+margin:12px 0;
+}
+.hint{
+background:#e8f5ff;
+padding:14px;
+border-radius:18px;
+font-weight:700;
+color:#084fb4;
+margin-top:14px;
+}
+.green{
+background:linear-gradient(135deg,#3ae07e,#0ca953)!important;
+}
+.finish{
+min-height:70vh;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+text-align:center;
+}
+.finishCircle{
+width:170px;height:170px;border-radius:50%;
+background:linear-gradient(135deg,#4ae786,#11ab58);
+display:grid;place-items:center;
+font-size:80px;color:#fff;
+}
+@media(max-width:520px){
+h1{font-size:42px}
+.card{grid-template-columns:58px 1fr auto}
+}
+</style>
 </head>
 <body>
-  <main class="wrap">
-    <header class="hero">
-      <div class="fruit f1">🍊</div><div class="fruit f2">🍋</div><div class="fruit f3">💦</div><div class="fruit f4">🍹</div>
-      <h1>Bar Automatico <span>di Carlo</span></h1>
-      <div class="subtitle" id="subtitle">Scegli le tue bevande preferite 🍸</div>
-      <div class="status-pill" id="blePill"><span id="bleDot" class="dot no"></span><span id="bleText">Bluetooth non connesso</span></div>
-    </header>
 
-    <section id="menu" class="section active">
-      <div class="drink-list" id="drinkList"></div>
-    </section>
+<div class="wrap">
 
-    <section id="cart" class="section">
-      <div class="panel">
-        <h2>Il tuo carrello 🛒</h2>
-        <div id="cartRows"></div>
-        <div class="total-card"><span>Totale</span><span id="cartTotal">0,00 €</span></div>
-        <button class="cta" style="width:100%;margin-top:16px" onclick="showPayment()">🛒 CONTINUA</button>
-        <button class="soft" style="width:100%;height:52px;border-radius:18px;margin-top:10px" onclick="showSection('menu')">↩ Torna al menu</button>
-      </div>
-    </section>
+<div class="hero">
+<h1>Bar Automatico <span>di Carlo</span></h1>
+<div class="sub">Scegli le tue bevande preferite 🍸</div>
+</div>
 
-    <section id="payment" class="section">
-      <div class="panel pay-hero">
-        <div class="big-emoji">💳</div>
-        <h2>Pagamento</h2>
-        <p><b>Completa il pagamento al POS.</b></p>
-        <p>Importo da pagare</p>
-        <div class="pay-total" id="payTotal">0,00 €</div>
-        <div class="hint">Dopo il pagamento premi il pulsante qui sotto. Solo adesso ti verrà chiesto di collegarti al Bluetooth della macchina.</div>
-        <button class="cta green" style="width:100%" onclick="payAndConnect()">✓ HO PAGATO E INVIA ORDINE</button>
-      </div>
-    </section>
+<div id="menu" class="page active">
+<div id="drinkList" class="list"></div>
+</div>
 
-    <section id="machine" class="section">
-      <div class="machine">
-        <div id="machineIcon" class="circle">🥤</div>
-        <h2 id="machineTitle">Ordine inviato</h2>
-        <p id="machineText">Attendo istruzioni dalla macchina...</p>
-        <div class="progress" id="progressDots"></div>
-        <div class="order-mini" id="orderMini"></div>
-      </div>
-    </section>
+<div id="cartPage" class="page">
+<div class="panel">
+<h2>Il tuo carrello 🛒</h2>
+<div id="cartRows"></div>
+<div class="bigTotal">
+<span>Totale</span>
+<span id="cartTotal">0,00 €</span>
+</div>
+<button class="go" style="width:100%;margin-top:16px" onclick="goPayment()">CONTINUA</button>
+</div>
+</div>
 
-    <section id="thanks" class="section">
-      <div class="machine">
-        <div class="circle yellow">🏆</div>
-        <h2>Grazie!</h2>
-        <p>Grazie mille per aver scelto<br><b>il Bar Automatico di Carlo.</b></p>
-        <div class="hint">Puoi effettuare un nuovo ordine quando vuoi.</div>
-        <button class="cta green" style="width:100%" onclick="resetAll()">Nuovo ordine</button>
-      </div>
-    </section>
-  </main>
+<div id="paymentPage" class="page">
+<div class="panel pay">
+<div class="payIcon">💳</div>
+<h2>Conferma e paga</h2>
+<p><b>L’ordine verrà inviato via Bluetooth.</b></p>
+<div class="payTotal" id="payAmount">0,00 €</div>
+<div class="hint">
+LED macchina:<br>
+🟢 pronta<br>
+🔵 posiziona bicchiere<br>
+🟠 erogazione<br>
+🟣 rimuovi bicchiere
+</div>
+<button class="go green" style="width:100%;margin-top:18px" onclick="confirmAndPay()">✓ CONFERMA ORDINE E PAGA</button>
+</div>
+</div>
 
-  <div class="bar" id="bottomBar">
-    <div><small>Carrello</small><strong id="barTotal">0,00 €</strong></div>
-    <button class="cta" id="goCart" onclick="openCart()" disabled>Vai al carrello →</button>
-  </div>
+<div id="finishPage" class="page">
+<div class="finish">
+<div class="finishCircle">✅</div>
+<h2>Ordine inviato</h2>
+<p>Completa il pagamento su SumUp.<br>Poi segui i LED della macchina.</p>
+</div>
+</div>
 
-  <div class="brand"></div>
+</div>
+
+<div class="bottom" id="bottomBar">
+<div class="total">
+<div>Carrello</div>
+<strong id="bottomTotal">0,00 €</strong>
+</div>
+<button id="goCart" class="go" onclick="openCart()" disabled>Vai al carrello →</button>
+</div>
 
 <script>
-const SERVICE_UUID = '19b10000-e8f2-537e-4f6c-d104768a1214';
-const RX_UUID      = '19b10001-e8f2-537e-4f6c-d104768a1214';
-const TX_UUID      = '19b10002-e8f2-537e-4f6c-d104768a1214';
 
-let bleDevice=null, rxChar=null, txChar=null, connected=false;
+const sumupLinks = {
+1:"https://pay.sumup.com/b2c/QRL1CFNW",
+2:"https://pay.sumup.com/b2c/QG3HG5ED",
+3:"https://pay.sumup.com/b2c/QBGLF0ZL",
+4:"https://pay.sumup.com/b2c/QED0ORQ1",
+5:"https://pay.sumup.com/b2c/QM7CT9H4",
+6:"https://pay.sumup.com/b2c/QU9VDEC9",
+7:"https://pay.sumup.com/b2c/QHL6ALRK",
+8:"https://pay.sumup.com/b2c/QMW06GJY",
+9:"https://pay.sumup.com/b2c/QN4IXYLK",
+10:"https://pay.sumup.com/b2c/QB5A2EL2",
+11:"https://pay.sumup.com/b2c/QAI20F1G",
+12:"https://pay.sumup.com/b2c/QQLXH3WO",
+13:"https://pay.sumup.com/b2c/QOBNA3IZ",
+14:"https://pay.sumup.com/b2c/QY9YR2T1",
+15:"https://pay.sumup.com/b2c/QTE96RB",
+16:"https://pay.sumup.com/b2c/Q1NIFLLA",
+17:"https://pay.sumup.com/b2c/Q0I0NHT8",
+18:"https://pay.sumup.com/b2c/Q0BPDPIT",
+19:"https://pay.sumup.com/b2c/QD6ENMF6",
+20:"https://pay.sumup.com/b2c/QZ9TSLXI",
+21:"https://pay.sumup.com/b2c/QLFGIEF3",
+22:"https://pay.sumup.com/b2c/QGZ2J8SV",
+23:"https://pay.sumup.com/b2c/Q6AUQTIL",
+24:"https://pay.sumup.com/b2c/QACZEHR9",
+25:"https://pay.sumup.com/b2c/QKF6ECVM",
+26:"https://pay.sumup.com/b2c/QK0UCUV0",
+27:"https://pay.sumup.com/b2c/QZM92HJZ",
+28:"https://pay.sumup.com/b2c/Q6KCBYTZ",
+29:"https://pay.sumup.com/b2c/Q06J9UF0",
+30:"https://pay.sumup.com/b2c/Q1IVG46S",
+31:"https://pay.sumup.com/b2c/QPDWYX04",
+32:"https://pay.sumup.com/b2c/QF6Y5ZFB",
+33:"https://pay.sumup.com/b2c/QR8JL0EZ",
+34:"https://pay.sumup.com/b2c/QJ0HBEIK",
+35:"https://pay.sumup.com/b2c/Q94JJS0C",
+36:"https://pay.sumup.com/b2c/QFPVHKDG",
+37:"https://pay.sumup.com/b2c/QZ7WJXUG",
+38:"https://pay.sumup.com/b2c/Q4WVYTT1",
+39:"https://pay.sumup.com/b2c/QZZDYMWK",
+40:"https://pay.sumup.com/b2c/QNGXSSOH",
+41:"https://pay.sumup.com/b2c/Q8D3SWTY",
+42:"https://pay.sumup.com/b2c/Q52Y1DXZ",
+43:"https://pay.sumup.com/b2c/QPJTX5AM",
+44:"https://pay.sumup.com/b2c/Q2ECN5CW",
+45:"https://pay.sumup.com/b2c/QTNX0AS0",
+46:"https://pay.sumup.com/b2c/QIWC7MB9",
+47:"https://pay.sumup.com/b2c/Q5LPE0PF",
+48:"https://pay.sumup.com/b2c/QES1XV79",
+49:"https://pay.sumup.com/b2c/Q7GJ3D6J",
+50:"https://pay.sumup.com/b2c/QAQCHNA2"
+};
+
+const SERVICE_UUID='19b10000-e8f2-537e-4f6c-d104768a1214';
+const RX_UUID='19b10001-e8f2-537e-4f6c-d104768a1214';
+
 const drinks=[
-  {n:'Coca Cola', p:250, i:'🥤', ing:''},
-  {n:'Tè Pesca', p:250, i:'🧋', ing:''},
-  {n:'Limonata', p:250, i:'🍋', ing:''},
-  {n:'Acqua Naturale', p:50, i:'💧', ing:''},
-  {n:'Acqua Frizzante', p:50, i:'🫧', ing:''},
-  {n:'Spritz', p:600, i:'🍹', ing:'Aperol, Prosecco, Acqua frizzante'},
-  {n:'Gin Lemon', p:600, i:'🍸', ing:'Gin, Limonata'},
-  {n:'Aperol Lemon', p:600, i:'🍊', ing:'Aperol, Limonata'},
-  {n:'Peach Sparkle', p:600, i:'🍑', ing:'Prosecco, Acqua frizzante, Tè pesca'},
-  {n:'Sunset Fresh', p:600, i:'🌅', ing:'Gin, Acqua frizzante, Limonata, Tè pesca'}
+{name:'Coca Cola',price:2,icon:'🥤',ingredients:''},
+{name:'Tè Pesca',price:2,icon:'🧋',ingredients:''},
+{name:'Limonata',price:2,icon:'🍋',ingredients:''},
+{name:'Acqua Naturale',price:1,icon:'💧',ingredients:''},
+{name:'Acqua Frizzante',price:1,icon:'🫧',ingredients:''},
+{name:'Spritz',price:6,icon:'🍹',ingredients:'Aperol, Prosecco, Acqua frizzante'},
+{name:'Gin Lemon',price:6,icon:'🍸',ingredients:'Gin, Limonata'},
+{name:'Aperol Lemon',price:6,icon:'🍊',ingredients:'Aperol, Limonata'},
+{name:'Peach Sparkle',price:6,icon:'🍑',ingredients:'Prosecco, Acqua frizzante, Tè pesca'},
+{name:'Sunset Fresh',price:6,icon:'🌅',ingredients:'Gin, Acqua frizzante, Limonata, Tè pesca'}
 ];
+
 let qty=Array(drinks.length).fill(0);
+
+function euro(v){
+return v.toFixed(2).replace('.',',')+' €';
+}
+
+function total(){
+return qty.reduce((s,q,i)=>s+q*drinks[i].price,0);
+}
+
+function renderMenu(){
+const list=document.getElementById('drinkList');
+list.innerHTML='';
+
+drinks.forEach((d,i)=>{
+const card=document.createElement('div');
+card.className='card';
+
+card.innerHTML=`
+<div class="icon">${d.icon}</div>
+
+<div>
+<div class="name">${d.name}</div>
+${d.ingredients?`<div class="ing">${d.ingredients}</div>`:''}
+</div>
+
+<div>
+<div class="price">${euro(d.price)}</div>
+
+<div class="ctrl">
+<button class="round" onclick="changeQty(${i},-1)">−</button>
+<div class="qty">${qty[i]}</div>
+<button class="round plus" onclick="changeQty(${i},1)">+</button>
+</div>
+</div>
+`;
+
+list.appendChild(card);
+});
+}
+
+function changeQty(i,d){
+if(d>0 && total()+drinks[i].price>50){
+alert('Massimo importo raggiunto: 50,00 €');
+return;
+}
+
+qty[i]=Math.max(0,qty[i]+d);
+
+renderMenu();
+updateBottom();
+}
+
+function updateBottom(){
+document.getElementById('bottomTotal').textContent=euro(total());
+document.getElementById('goCart').disabled=total()<=0;
+}
+
+function show(id){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+
+document.getElementById('bottomBar').style.display=id==='menu'?'grid':'none';
+}
+
+function openCart(){
+const rows=document.getElementById('cartRows');
+rows.innerHTML='';
+
+drinks.forEach((d,i)=>{
+if(qty[i]>0){
+const row=document.createElement('div');
+row.className='cartRow';
+
+row.innerHTML=`
+<div class="icon">${d.icon}</div>
+<div>
+<b>${d.name}</b><br>
+${qty[i]} x ${euro(d.price)}
+</div>
+<div><b>${euro(qty[i]*d.price)}</b></div>
+`;
+
+rows.appendChild(row);
+}
+});
+
+document.getElementById('cartTotal').textContent=euro(total());
+
+show('cartPage');
+}
+
+function goPayment(){
+document.getElementById('payAmount').textContent=euro(total());
+show('paymentPage');
+}
+
+function buildOrder(){
 let order=[];
 
-function euro(c){return (c/100).toFixed(2).replace('.',',')+' €'}
-function showSection(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.getElementById('bottomBar').style.display=(id==='menu')?'grid':'none';
+qty.forEach((q,i)=>{
+for(let n=0;n<q;n++){
+order.push(i);
 }
-function renderMenu(){
-  const list=document.getElementById('drinkList');
-  list.innerHTML='';
-  drinks.forEach((d,idx)=>{
-    const row=document.createElement('div');
-    row.className='drink';
-    row.innerHTML=`<div class="icon">${d.i}</div>
-      <div><div class="name">${d.n}</div>${d.ing?`<div class="ingredients">${d.ing}</div>`:''}</div>
-      <div><div class="price">${euro(d.p)}</div>
-      <div class="qty"><button class="small" onclick="changeQty(${idx},-1)">−</button><span class="num" id="q${idx}">${qty[idx]}</span><button class="small plus" onclick="changeQty(${idx},1)">+</button></div></div>`;
-    list.appendChild(row);
-  });
-}
-function changeQty(i,delta){qty[i]=Math.max(0,qty[i]+delta);renderMenu();updateTotals();}
-function total(){return qty.reduce((s,q,i)=>s+q*drinks[i].p,0)}
-function count(){return qty.reduce((s,q)=>s+q,0)}
-function updateTotals(){
-  document.getElementById('barTotal').textContent=euro(total());
-  document.getElementById('goCart').disabled=count()===0;
-}
-function openCart(){
-  const rows=document.getElementById('cartRows');
-  rows.innerHTML='';
-  drinks.forEach((d,i)=>{
-    if(qty[i]>0){
-      const r=document.createElement('div');
-      r.className='cart-row';
-      r.innerHTML=`<div class="icon">${d.i}</div><div><b>${d.n}</b><br>${qty[i]} x ${euro(d.p)}</div><b>${euro(qty[i]*d.p)}</b>`;
-      rows.appendChild(r);
-    }
-  });
-  document.getElementById('cartTotal').textContent=euro(total());
-  showSection('cart');
-}
-function showPayment(){
-  document.getElementById('payTotal').textContent=euro(total());
-  showSection('payment');
-}
-function makeOrder(){
-  const arr=[];
-  qty.forEach((q,i)=>{for(let k=0;k<q;k++)arr.push(i);});
-  return arr;
+});
+
+return order;
 }
 
-async function payAndConnect(){
-  order=makeOrder();
-  if(order.length===0)return;
+async function confirmAndPay(){
 
-  showBlePill();
-  setBleStatus('work','Connessione Bluetooth...');
-  const okConn = connected || await connectBluetooth();
-  if(!okConn)return;
+const t=total();
 
-  const okSend = await sendLine('O:'+order.join(','));
-  if(!okSend)return;
+const link=sumupLinks[t];
 
-  buildProgress();
-  showMachine('🥤','Ordine inviato','Posiziona il primo bicchiere nell’area di erogazione. Il sistema partirà automaticamente appena lo rileva.','blue');
-  showSection('machine');
+if(!link){
+alert('Link SumUp non trovato.');
+return;
 }
 
-function showBlePill(){
-  document.getElementById('blePill').classList.add('show');
+const ok=await sendBluetooth();
+
+if(!ok)return;
+
+show('finishPage');
+
+window.open(link,'_blank');
 }
 
-async function connectBluetooth(){
-  try{
-    if(!navigator.bluetooth){
-      alert('Questo browser non supporta Web Bluetooth. Usa Chrome/Edge su Android o PC. Su iPhone Safari non funziona.');
-      setBleStatus('no','Bluetooth non disponibile');
-      return false;
-    }
-    bleDevice=await navigator.bluetooth.requestDevice({
-      filters:[{namePrefix:'Bar Automatico'}],
-      optionalServices:[SERVICE_UUID]
-    });
-    bleDevice.addEventListener('gattserverdisconnected',()=>{connected=false;setBleStatus('no','Bluetooth disconnesso')});
-    const server=await bleDevice.gatt.connect();
-    const service=await server.getPrimaryService(SERVICE_UUID);
-    rxChar=await service.getCharacteristic(RX_UUID);
-    txChar=await service.getCharacteristic(TX_UUID);
-    await txChar.startNotifications();
-    txChar.addEventListener('characteristicvaluechanged',handleNotify);
-    connected=true;
-    setBleStatus('ok','Connesso al Bar Automatico');
-    return true;
-  }catch(e){
-    console.error(e);
-    setBleStatus('no','Bluetooth non connesso');
-    alert('Connessione non riuscita: '+e);
-    return false;
-  }
+async function sendBluetooth(){
+
+try{
+
+if(!navigator.bluetooth){
+alert('Bluetooth non supportato. Usa Chrome o Edge.');
+return false;
 }
-function setBleStatus(type,text){
-  const dot=document.getElementById('bleDot');
-  dot.className='dot '+(type==='ok'?'ok':type==='work'?'work':'no');
-  document.getElementById('bleText').textContent=text;
+
+const device=await navigator.bluetooth.requestDevice({
+filters:[{namePrefix:'Bar Automatico'}],
+optionalServices:[SERVICE_UUID]
+});
+
+const server=await device.gatt.connect();
+
+const service=await server.getPrimaryService(SERVICE_UUID);
+
+const rx=await service.getCharacteristic(RX_UUID);
+
+const command='O:'+buildOrder().join(',');
+
+await rx.writeValue(new TextEncoder().encode(command));
+
+return true;
+
+}catch(err){
+
+alert('Connessione Bluetooth annullata.');
+console.error(err);
+
+return false;
 }
-async function sendLine(line){
-  if(!connected || !rxChar){
-    alert('Bluetooth non connesso.');
-    return false;
-  }
-  try{
-    const data=new TextEncoder().encode(line);
-    await rxChar.writeValue(data);
-    return true;
-  }catch(e){
-    alert('Errore invio ordine: '+e);
-    return false;
-  }
 }
-function handleNotify(event){
-  const msg=new TextDecoder().decode(event.target.value);
-  console.log('BLE:',msg);
-  if(msg.startsWith('S:')){
-    const parts=msg.split(':');
-    const st=parts[1];
-    const idx=parseInt(parts[2]||'0');
-    if(st==='READY') setBleStatus('ok','Macchina disponibile');
-    if(st==='WAIT_CUP') showMachine('🥤','Posiziona il bicchiere',`Posiziona il bicchiere ${idx+1} di ${order.length}. Il sensore lo rileverà automaticamente.`,'blue',idx);
-    if(st==='DISPENSING') showMachine('🍹','Erogazione in corso...',`Sto preparando: ${drinks[order[idx]]?.n || 'bevanda'}. Non rimuovere il bicchiere.`,'orange',idx);
-    if(st==='REMOVE_CUP') showMachine('✅','Erogazione completata!',`Rimuovi il bicchiere ${idx+1}. ${idx+1<order.length?'Poi posiziona il successivo.':'Ordine quasi completato.'}`,'green',idx,true);
-    if(st==='DONE'){showSection('thanks');setBleStatus('ok','Macchina disponibile');}
-    if(st==='BUSY') alert('La macchina è occupata. Attendi che torni disponibile.');
-  }
-}
-function buildProgress(){
-  const dots=document.getElementById('progressDots');
-  dots.innerHTML='';
-  order.forEach((_,i)=>{
-    const d=document.createElement('span');d.className='step-dot';d.id='step'+i;dots.appendChild(d);
-  });
-  const mini=document.getElementById('orderMini');
-  mini.innerHTML='<b>Il tuo ordine</b><br>'+order.map((id,i)=>`${i+1}. ${drinks[id].n}`).join('<br>');
-}
-function showMachine(icon,title,text,color,idx=-1,done=false){
-  const c=document.getElementById('machineIcon');
-  c.className='circle '+(color||'');
-  c.textContent=icon;
-  document.getElementById('machineTitle').textContent=title;
-  document.getElementById('machineText').textContent=text;
-  order.forEach((_,i)=>{
-    const el=document.getElementById('step'+i);
-    if(el) el.className='step-dot '+((i<idx || (done && i===idx))?'on':'');
-  });
-}
-function resetAll(){
-  qty=Array(drinks.length).fill(0);
-  order=[];
-  renderMenu();updateTotals();showSection('menu');
-}
-renderMenu();updateTotals();
+
+renderMenu();
+updateBottom();
+
 </script>
+
 </body>
 </html>
